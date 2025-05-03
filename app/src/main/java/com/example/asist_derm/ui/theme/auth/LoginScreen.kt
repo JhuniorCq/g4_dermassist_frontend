@@ -60,26 +60,51 @@ fun LoginScreen() {
                     .padding(bottom = 40.dp)
             )
 
+            @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
             TextField(
                 value = text,
                 onValueChange = { text = it },
-                placeholder = { Text("Email",color = Color.White) },
+                placeholder = {
+                    Text(
+                        text = "Email",
+                        style = TextStyle(color = Color.White.copy(alpha = 0.5f))
+                    )
+                },
+                textStyle = TextStyle(color = Color.White),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.White.copy(alpha = 0.2f),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
                 modifier = Modifier
-                    .fillMaxWidth().padding(bottom = 40.dp, start = 10.dp, end = 10.dp)
+                    .fillMaxWidth()
+                    .padding(bottom = 40.dp, start = 10.dp, end = 10.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .border(1.dp, Color.Gray.copy(alpha = 0.3f))
-                )
+            )
+            @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
             TextField(
                 value = text2,
                 onValueChange = { text2 = it },
-                placeholder = { Text("Password",color = Color.White) },
-                textStyle = TextStyle(color = Color.Black.copy(alpha = 0.5f)),
-                modifier = Modifier
-                    .fillMaxWidth().padding(bottom = 50.dp, start = 10.dp, end = 10.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color.Black.copy(alpha = 0.6f))
-                    .border(1.dp, Color.Gray.copy(alpha = 0.3f), RoundedCornerShape(16.dp)
+                placeholder = {
+                    Text(
+                        text = "Password",
+                        style = TextStyle(color = Color.White.copy(alpha = 0.5f))
                     )
+                },
+                textStyle = TextStyle(color = Color.White),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.White.copy(alpha = 0.2f),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 40.dp, start = 10.dp, end = 10.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .border(1.dp, Color.Gray.copy(alpha = 0.3f))
             )
             Button(onClick = {  }
                 ,modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp)
