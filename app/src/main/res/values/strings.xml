@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Asist_derm</string>
+    <string name="description">DermAssist te ayuda a identificar posibles afecciones dermatológicas al analizar tus fotos con inteligencia artificial. Obtén orientación rápida y recomendaciones iniciales.</string>
 </resources>
