@@ -35,7 +35,8 @@ fun NavGraph(){
         composable("predict/{uri}") { backStackEntry ->
             val uriString = backStackEntry.arguments?.getString("uri")
             val uri = Uri.parse(uriString)
-            PredictScreen(uri = uri, onBack = { navController.popBackStack() })
+            PredictScreen(navController = navController
+                , uri = uri, onBack = { navController.popBackStack() })
         }
     }
 }
