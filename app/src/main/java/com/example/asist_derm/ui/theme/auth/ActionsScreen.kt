@@ -34,14 +34,16 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
 
 @Composable
-fun ActionsScreen() {
+fun ActionsScreen(navController: NavHostController) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            BottomNavPanel()
+            BottomNavPanel(navController)
         }
     ) { paddingValues ->
         val gradientBrush = Brush.verticalGradient(
@@ -137,7 +139,7 @@ fun Presentation() {
 }
 
 @Composable
-fun BottomNavPanel(modifier: Modifier= Modifier) {
+fun BottomNavPanel(navController: NavHostController,modifier: Modifier= Modifier) {
       BottomNavigation(
             modifier = Modifier.fillMaxWidth(), backgroundColor = Color.White,
         ) {
@@ -160,7 +162,7 @@ fun BottomNavPanel(modifier: Modifier= Modifier) {
             )
             BottomNavigationItem(
                 selected = false,
-                onClick = {  },
+                onClick = { navController.navigate("camera") },
                 icon = {
                     Box(
                         modifier = Modifier
@@ -199,5 +201,6 @@ fun BottomNavPanel(modifier: Modifier= Modifier) {
 @Composable
 @Preview
     fun ActionsPreview(){
-    ActionsScreen()
+        val navController: NavHostController = rememberNavController()
+    ActionsScreen(navController)
 }

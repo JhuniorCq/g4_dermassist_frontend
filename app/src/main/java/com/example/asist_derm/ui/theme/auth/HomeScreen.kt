@@ -26,10 +26,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavHostController) {
     Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Column(modifier = Modifier.fillMaxSize().weight(2f),) {
@@ -60,7 +62,7 @@ fun HomeScreen() {
 
                 }
                 Box(modifier = Modifier.fillMaxSize().weight(1f)) {
-                    Buttons()
+                    Buttons(navController)
                 }
             }
 
@@ -103,13 +105,13 @@ fun App_funtions(){
 
 }
 @Composable
-fun Buttons(){
+fun Buttons(navController: NavHostController){
     Column(modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(30.dp),
         horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(onClick = {  }
+        Button(onClick = { navController.navigate("login") }
             ,modifier = Modifier.fillMaxWidth()
             ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
             ,colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFC0E7FF),
@@ -117,7 +119,7 @@ fun Buttons(){
             Text(text = "Log in", fontWeight = FontWeight.Bold, fontSize = 20.sp)
         }
 
-        Button(onClick = {  }
+        Button(onClick = { navController.navigate("register") }
             ,modifier = Modifier.fillMaxWidth()
             ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
             ,colors = ButtonDefaults.buttonColors(containerColor = Color.White,
@@ -132,6 +134,7 @@ fun Buttons(){
 @Composable
 @Preview
 fun HomeScreenPreview() {
-    HomeScreen()
+    val navController: NavHostController = rememberNavController()
+    HomeScreen(navController)
 }
 

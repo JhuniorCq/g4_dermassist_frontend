@@ -24,10 +24,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
 
 @Composable
-fun RegisterScreen() {
+fun RegisterScreen(navController: NavHostController) {
     var text by remember { mutableStateOf("") }
     var text2 by remember { mutableStateOf("") }
     var text3 by remember { mutableStateOf("") }
@@ -143,5 +145,6 @@ fun RegisterScreen() {
 @Composable
 @Preview(showBackground = true)
 fun RegisterPreview() {
-    RegisterScreen()
+    val navController: NavHostController = rememberNavController()
+    RegisterScreen(navController)
 }

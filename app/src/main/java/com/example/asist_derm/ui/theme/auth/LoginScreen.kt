@@ -24,10 +24,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavHostController) {
     var text by remember { mutableStateOf("") }
     var text2 by remember { mutableStateOf("") }
 
@@ -106,7 +108,7 @@ fun LoginScreen() {
                     .clip(RoundedCornerShape(16.dp))
                     .border(1.dp, Color.Gray.copy(alpha = 0.3f))
             )
-            Button(onClick = {  }
+            Button(onClick = {  navController.navigate("actions") }
                 ,modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp)
                 ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ,colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4393C5),
@@ -120,5 +122,6 @@ fun LoginScreen() {
 @Composable
 @Preview(showBackground = true)
 fun LoginPreview() {
-    LoginScreen()
+    val navController: NavHostController = rememberNavController()
+    LoginScreen(navController)
 }
