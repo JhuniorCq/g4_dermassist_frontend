@@ -78,12 +78,12 @@ fun Greeting(name: String, apellidos:String) {
      ){
          Text(text = buildAnnotatedString {
              append("Hola, ")
-             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = Color.Black)) {
                  append("$name $apellidos")
              }
              append(" \uD83D\uDC4B")
          },
-         fontSize = 18.sp, textAlign = TextAlign.End,
+         fontSize = 18.sp, textAlign = TextAlign.End, color = Color.Black,
              modifier = Modifier
 
 
@@ -114,22 +114,24 @@ fun Presentation(navController: NavHostController ) {
                 modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
             )
             Text(
-                text = stringResource(R.string.description), fontSize = 20.sp,
+                text = stringResource(R.string.description),
+                fontSize = 20.sp, color = Color.Black,
                 modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 30.dp)
             )
             Text(
-                text = "\uD83D\uDCF8 Haz una foto o sube una imagen y deja que la tecnología te ayude."
-                , fontSize = 19.sp,modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 10.dp)
+                text = "\uD83D\uDCF8 Haz una foto o sube una imagen y deja que la tecnología te ayude ⬇\uFE0F."
+                , fontSize = 19.sp, color = Color.Black,
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 10.dp)
             )
             Button(onClick = {navController.navigate("camera")  }, modifier = Modifier
                 .padding(bottom = 20.dp,top = 30.dp).fillMaxWidth()
                 ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ,colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4393C5)))
             {
-                Text(text = "Hacer una foto")
+                Text(text = "Hacer una foto", color = Color.White)
             }
             Text(
-                text = "o", fontSize = 15.sp, fontWeight = FontWeight.Bold
+                text = "o", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.Black
             )
             Button(onClick = { }
                 ,modifier = Modifier.padding(bottom = 30.dp,top = 30.dp).fillMaxWidth()
