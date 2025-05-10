@@ -10,6 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.example.asist_derm.ui.theme.auth.ActionsScreen
 import com.example.asist_derm.ui.theme.auth.CameraScreen
+import com.example.asist_derm.ui.theme.auth.ClinicsScreen
+import com.example.asist_derm.ui.theme.auth.HistoryScreen
 import com.example.asist_derm.ui.theme.auth.HomeScreen
 import com.example.asist_derm.ui.theme.auth.LoginScreen
 import com.example.asist_derm.ui.theme.auth.PredictScreen
@@ -38,5 +40,8 @@ fun NavGraph(){
             PredictScreen(navController = navController
                 , uri = uri, onBack = { navController.popBackStack() })
         }
+        composable("clinics") { ClinicsScreen(navController) }
+        composable("history") { HistoryScreen(navController) }
+
     }
 }

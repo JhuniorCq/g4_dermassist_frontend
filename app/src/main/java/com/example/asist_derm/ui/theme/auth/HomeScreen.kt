@@ -8,8 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -30,106 +34,124 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
 
-@Composable
-fun HomeScreen(navController: NavHostController) {
-    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Column(modifier = Modifier.fillMaxSize().weight(2f),) {
-                    Box(modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                        contentAlignment = Alignment.Center) {
-                        Text(
-                            "Descubre el poder de DermAssist", textAlign = TextAlign.Center,
-                            fontSize = 28.sp, fontFamily= FontFamily.Serif, fontWeight = FontWeight.Bold,
-                            modifier = Modifier.fillMaxSize().padding(top = 30.dp)
-                        )
-                    }
-                    Box(modifier = Modifier.fillMaxSize().weight(2f)) {
-                        val image2 = painterResource(id = R.drawable.page2)
-                        Image(
-                            painter = image2,
-                            contentDescription = null,
-                            contentScale = ContentScale.FillBounds,
-                            modifier = Modifier.fillMaxSize().padding(20.dp)
-                                .clip(RoundedCornerShape(40.dp))
-                        )
-                    }
-                }
-                Box(modifier = Modifier.fillMaxSize().weight(1f)) {
-                    App_funtions()
 
-                }
-                Box(modifier = Modifier.fillMaxSize().weight(1f)) {
-                    Buttons(navController)
-                }
+    @Composable
+    fun HomeScreen(navController: NavHostController) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    "Descubre el poder de DermAssist",
+                    textAlign = TextAlign.Center,
+                    fontSize = 28.sp,
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                )
+
+                val image = painterResource(id = R.drawable.page2)
+                Image(
+                    painter = image,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                )
+
+                App_funtions()
+                Buttons(navController)
+            }
+        }
+    }
+
+    @Composable
+    fun App_funtions() {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            FunctionItem(R.drawable.page2_1, "Detecta enfermedades cutáneas")
+            FunctionItem(R.drawable.page2_2, "Asistencia médica inteligente")
+            FunctionItem(R.drawable.page2_3, "Diagnóstico rápido móvil")
+        }
+    }
+
+    @Composable
+    fun FunctionItem(imageId: Int, label: String) {
+        Column(
+            modifier = Modifier
+                .width(100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            val image = painterResource(id = imageId)
+            Image(
+                painter = image,
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .height(80.dp)
+                    .fillMaxWidth()
+            )
+            Text(
+                text = label,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+    }
+
+    @Composable
+    fun Buttons(navController: NavHostController) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(
+                onClick = { navController.navigate("login") },
+                modifier = Modifier.fillMaxWidth(),
+                elevation = ButtonDefaults.buttonElevation(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFC0E7FF),
+                    contentColor = Color.Black
+                )
+            ) {
+                Text("Log in", fontWeight = FontWeight.Bold, fontSize = 20.sp)
             }
 
-        }
-    }
-
-@Composable
-fun App_funtions(){
-    Row(modifier = Modifier.fillMaxSize()){
-        Column(modifier = Modifier.weight(1f).fillMaxSize().padding(30.dp)) {
-            val image_funtion1= painterResource(id = R.drawable.page2_1)
-            Image(painter = image_funtion1,
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
+            Button(
+                onClick = { navController.navigate("register") },
+                modifier = Modifier.fillMaxWidth(),
+                elevation = ButtonDefaults.buttonElevation(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color.Black
                 )
-            Text("Detecta enfermedades cutáneas", fontSize = 12.sp, fontWeight = FontWeight.Bold
-                , textAlign = TextAlign.Center, modifier = Modifier.padding(top =8.dp))
-
-        }
-        Column(modifier = Modifier.weight(1f).fillMaxSize().padding(30.dp)) {
-            val image_funtion2= painterResource(id = R.drawable.page2_2)
-            Image(painter = image_funtion2,
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
-            )
-            Text("Asistencia médica inteligente",fontSize = 12.sp, fontWeight = FontWeight.Bold
-                , textAlign = TextAlign.Center,modifier = Modifier.padding(top =8.dp))
-
-        }
-        Column(modifier = Modifier.weight(1f).fillMaxSize().padding(30.dp)) {
-            val image_funtion3= painterResource(id = R.drawable.page2_3)
-            Image(painter = image_funtion3,
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
-            )
-            Text("Diagnostico rápido móvil",fontSize = 12.sp, fontWeight = FontWeight.Bold
-                , textAlign = TextAlign.Center,modifier = Modifier.padding(top =8.dp))
+            ) {
+                Text("Sign up", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            }
         }
     }
-
-}
-@Composable
-fun Buttons(navController: NavHostController){
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(30.dp),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(onClick = { navController.navigate("login") }
-            ,modifier = Modifier.fillMaxWidth()
-            ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
-            ,colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFC0E7FF),
-            contentColor = Color.Black )) {
-            Text(text = "Log in", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-        }
-
-        Button(onClick = { navController.navigate("register") }
-            ,modifier = Modifier.fillMaxWidth()
-            ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
-            ,colors = ButtonDefaults.buttonColors(containerColor = Color.White,
-                contentColor = Color.Black ))
-        {
-            Text(text = "Sign up", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-        }
-
-    }
-}
 
 @Composable
 @Preview

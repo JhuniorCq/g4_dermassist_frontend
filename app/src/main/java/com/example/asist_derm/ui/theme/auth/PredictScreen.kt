@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -49,6 +51,9 @@ fun PredictScreen(navController: NavHostController, uri: Uri?, onBack: () -> Uni
             )
         )
     Column(modifier = Modifier.fillMaxSize().padding(paddingValues).background(brush = gradientBrush)
+        .verticalScroll(
+        rememberScrollState()
+    )
             , horizontalAlignment = Alignment.CenterHorizontally) {
 
             Greeting(name = "Airton", apellidos = "Collachagua")
@@ -77,13 +82,13 @@ fun PredictScreen(navController: NavHostController, uri: Uri?, onBack: () -> Uni
                     Text(text = "No se pudo cargar la imagen.")
                 }
             Text_predict("Dermatitis", "Es una inflamación de la piel que causa picazón, enrojecimiento y resequedad. No es contagiosa.\n" +
-                    "Consulta con un dermatólogo para un diagnóstico preciso" )
+                    "Consulta con un dermatólogo para un diagnóstico preciso", navController = navController )
 
     }
     }
 }
 @Composable
-fun Text_predict(enfermedad: String, detalle:String){
+fun Text_predict(enfermedad: String, detalle:String , navController: NavHostController){
 
     Box(modifier = Modifier
         .padding(16.dp)
@@ -101,7 +106,7 @@ fun Text_predict(enfermedad: String, detalle:String){
                 text = "$detalle", textAlign = TextAlign.Start, color = Color.Black,
                  fontSize = 15.sp
             )
-            Button(onClick = { },modifier = Modifier.padding(bottom = 30.dp,top = 30.dp).fillMaxWidth()
+            Button(onClick = { navController.navigate("clinics") },modifier = Modifier.padding(bottom = 30.dp,top = 30.dp).fillMaxWidth()
                 ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ,colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4393C5)))
             {

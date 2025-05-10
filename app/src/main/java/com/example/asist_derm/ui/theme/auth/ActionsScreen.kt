@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Button
@@ -19,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
 
@@ -53,11 +57,11 @@ fun ActionsScreen(navController: NavHostController) {
             )
         )
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues).background(brush = gradientBrush),
+            modifier = Modifier.fillMaxSize().padding(paddingValues).background(brush = gradientBrush).verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Greeting(name = "Airton", apellidos = "Collachagua")
-            Presentation()
+            Presentation(navController)
 
         }
     }
@@ -87,7 +91,7 @@ fun Greeting(name: String, apellidos:String) {
      }
 }
 @Composable
-fun Presentation() {
+fun Presentation(navController: NavHostController ) {
     Box(
         modifier = Modifier
             .padding(16.dp)
@@ -97,8 +101,7 @@ fun Presentation() {
             .padding(16.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Bienvenido a DermAssist", textAlign = TextAlign.Center,
@@ -118,7 +121,8 @@ fun Presentation() {
                 text = "\uD83D\uDCF8 Haz una foto o sube una imagen y deja que la tecnología te ayude."
                 , fontSize = 19.sp,modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 10.dp)
             )
-            Button(onClick = { }, modifier = Modifier.padding(bottom = 20.dp,top = 30.dp).fillMaxWidth()
+            Button(onClick = {navController.navigate("camera")  }, modifier = Modifier
+                .padding(bottom = 20.dp,top = 30.dp).fillMaxWidth()
                 ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ,colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4393C5)))
             {
@@ -127,7 +131,8 @@ fun Presentation() {
             Text(
                 text = "o", fontSize = 15.sp, fontWeight = FontWeight.Bold
             )
-            Button(onClick = { },modifier = Modifier.padding(bottom = 30.dp,top = 30.dp).fillMaxWidth()
+            Button(onClick = { }
+                ,modifier = Modifier.padding(bottom = 30.dp,top = 30.dp).fillMaxWidth()
                 ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ,colors = ButtonDefaults.buttonColors(containerColor = Color.White))
             {
@@ -140,12 +145,14 @@ fun Presentation() {
 
 @Composable
 fun BottomNavPanel(navController: NavHostController,modifier: Modifier= Modifier) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
       BottomNavigation(
             modifier = Modifier.fillMaxWidth(), backgroundColor = Color.White,
         ) {
             BottomNavigationItem(
-                selected = false,
-                onClick = { },
+                selected = currentRoute == "actions",
+                onClick = { navController.navigate("actions")},
                 icon = {
                     Icon(painter = painterResource(R.drawable.boton1), contentDescription = "Home"
                         ,tint = Color.Unspecified)
@@ -153,15 +160,15 @@ fun BottomNavPanel(navController: NavHostController,modifier: Modifier= Modifier
                 }
             )
             BottomNavigationItem(
-                selected = false,
-                onClick = {  },
+                selected = currentRoute == "history",
+                onClick = { navController.navigate("history") },
                 icon = {
                     Icon(painter = painterResource(R.drawable.boton2), contentDescription = "Historial"
                         ,tint = Color.Unspecified)
                 }
             )
             BottomNavigationItem(
-                selected = false,
+                selected = currentRoute == "camera",
                 onClick = { navController.navigate("camera") },
                 icon = {
                     Box(
@@ -179,8 +186,8 @@ fun BottomNavPanel(navController: NavHostController,modifier: Modifier= Modifier
                 }
             )
             BottomNavigationItem(
-                selected = false,
-                onClick = {  },
+                selected  = currentRoute == "clinics",
+                onClick = { navController.navigate("clinics") },
                 icon = {
                     Icon(painter = painterResource(R.drawable.boton4), contentDescription = "Clínicas",
                         tint = Color.Unspecified)
