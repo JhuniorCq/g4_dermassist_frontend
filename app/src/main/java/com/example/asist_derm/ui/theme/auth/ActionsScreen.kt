@@ -147,8 +147,8 @@ fun Presentation(navController: NavHostController ) {
 
 @Composable
 fun BottomNavPanel(navController: NavHostController,modifier: Modifier= Modifier) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
       BottomNavigation(
             modifier = Modifier.fillMaxWidth(), backgroundColor = Color.White,
         ) {
