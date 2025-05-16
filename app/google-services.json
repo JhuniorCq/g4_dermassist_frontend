@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "522953437830",
+    "project_id": "g4-dermassist",
+    "storage_bucket": "g4-dermassist.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:522953437830:android:34ff527dd15b2e77021707",
+        "android_client_info": {
+          "package_name": "com.example.asist_derm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzmFLNH-iy0AFLovxN5eeGGZ36i9Pgnz8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -60,6 +61,9 @@ dependencies {
     implementation("androidx.camera:camera-view:1.3.0")
     implementation("androidx.compose.ui:ui-viewbinding:1.6.0")
     implementation("io.coil-kt:coil-compose:2.3.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.auth.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

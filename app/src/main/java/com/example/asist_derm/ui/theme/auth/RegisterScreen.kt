@@ -1,5 +1,6 @@
 package com.example.asist_derm.ui.theme.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -27,12 +29,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
+import com.example.asist_derm.firebase.FirebaseAuthManager
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(navController: NavHostController) {
-    var text by remember { mutableStateOf("") }
-    var text2 by remember { mutableStateOf("") }
-    var text3 by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     Box(modifier = Modifier.fillMaxSize()) {
         val image_login = painterResource(id = R.drawable.page3)
         Image(
@@ -62,10 +68,10 @@ fun RegisterScreen(navController: NavHostController) {
                     .padding(bottom = 40.dp)
             )
 
-            @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
             TextField(
-                value = text,
-                onValueChange = { text = it },
+                value = email,
+                onValueChange = { email = it },
                 placeholder = {
                     Text(
                         text = "Email",
@@ -85,10 +91,10 @@ fun RegisterScreen(navController: NavHostController) {
                     .clip(RoundedCornerShape(16.dp))
                     .border(1.dp, Color.Gray.copy(alpha = 0.3f))
             )
-            @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
             TextField(
-                value = text2,
-                onValueChange = { text2 = it },
+                value = name,
+                onValueChange = { name = it },
                 placeholder = {
                     Text(
                         text = "UserName",
@@ -108,10 +114,9 @@ fun RegisterScreen(navController: NavHostController) {
                     .clip(RoundedCornerShape(16.dp))
                     .border(1.dp, Color.Gray.copy(alpha = 0.3f))
             )
-            @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
             TextField(
-                value = text3,
-                onValueChange = { text3 = it },
+                value = password,
+                onValueChange = { password = it },
                 placeholder = {
                     Text(
                         text = "Password",
@@ -131,7 +136,44 @@ fun RegisterScreen(navController: NavHostController) {
                     .clip(RoundedCornerShape(16.dp))
                     .border(1.dp, Color.Gray.copy(alpha = 0.3f))
             )
-            Button(onClick = {  }
+            val context = LocalContext.current
+
+            Button(onClick = {
+                when {
+                    email.isBlank() || !email.contains("@") -> {
+                        Toast.makeText(context, "Ingresa un email válido", Toast.LENGTH_LONG).show()
+                    }
+
+                    name.isBlank() -> {
+                        Toast.makeText(context, "Ingresa un nombre de usuario", Toast.LENGTH_LONG)
+                            .show()
+                    }
+
+                    password.length < 6 -> {
+                        Toast.makeText(
+                            context,
+                            "La contraseña debe tener al menos 6 caracteres",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
+                    else -> {
+                        Firebase.auth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Toast.makeText(context, "Registro exitoso", Toast.LENGTH_LONG)
+                                        .show()
+                                    navController.navigate("login") {
+                                        popUpTo("register") { inclusive = true }
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Registro fallido", Toast.LENGTH_LONG)
+                                        .show()
+                                }
+                            }
+                         }
+                    }
+                }
                 ,modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp)
                 ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ,colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4393C5),
@@ -139,8 +181,10 @@ fun RegisterScreen(navController: NavHostController) {
                 Text(text = "Sign up", fontWeight = FontWeight.Bold, fontSize = 20.sp)
             }
         }
+
     }
 }
+
 
 @Composable
 @Preview(showBackground = true)
