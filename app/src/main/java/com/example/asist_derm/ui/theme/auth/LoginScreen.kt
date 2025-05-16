@@ -1,5 +1,6 @@
 package com.example.asist_derm.ui.theme.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,9 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,11 +30,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavHostController) {
-    var text by remember { mutableStateOf("") }
-    var text2 by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize()) {
         val image_login = painterResource(id = R.drawable.page3)
@@ -62,10 +68,9 @@ fun LoginScreen(navController: NavHostController) {
                     .padding(bottom = 40.dp)
             )
 
-            @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
             TextField(
-                value = text,
-                onValueChange = { text = it },
+                value = email,
+                onValueChange = { email = it },
                 placeholder = {
                     Text(
                         text = "Email",
@@ -85,10 +90,11 @@ fun LoginScreen(navController: NavHostController) {
                     .clip(RoundedCornerShape(16.dp))
                     .border(1.dp, Color.Gray.copy(alpha = 0.3f))
             )
-            @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
             TextField(
-                value = text2,
-                onValueChange = { text2 = it },
+                value = password,
+                onValueChange = { password = it },
+                visualTransformation = PasswordVisualTransformation(),
                 placeholder = {
                     Text(
                         text = "Password",
@@ -108,7 +114,21 @@ fun LoginScreen(navController: NavHostController) {
                     .clip(RoundedCornerShape(16.dp))
                     .border(1.dp, Color.Gray.copy(alpha = 0.3f))
             )
-            Button(onClick = {  navController.navigate("actions") }
+            val context = LocalContext.current
+            Button(onClick = {
+                Firebase.auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener{
+                        task ->
+                        if (task.isSuccessful){
+                           Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_LONG).show()
+                            navController.navigate("actions") {
+                                popUpTo("login") { inclusive = true }
+                            }
+                        } else {
+                            Toast.makeText(context, task.exception?.localizedMessage ?: "Inicio de sesión fallido", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                             }
                 ,modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp)
                 ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ,colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4393C5),
