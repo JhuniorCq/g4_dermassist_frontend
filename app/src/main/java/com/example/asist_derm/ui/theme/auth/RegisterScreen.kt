@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
-import com.example.asist_derm.firebase.FirebaseAuthManager
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
