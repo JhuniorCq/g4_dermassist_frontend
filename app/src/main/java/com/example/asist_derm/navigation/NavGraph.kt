@@ -15,6 +15,7 @@ import com.example.asist_derm.ui.theme.auth.HistoryScreen
 import com.example.asist_derm.ui.theme.auth.HomeScreen
 import com.example.asist_derm.ui.theme.auth.LoginScreen
 import com.example.asist_derm.ui.theme.auth.PredictScreen
+import com.example.asist_derm.ui.theme.auth.ProfileScreen
 import com.example.asist_derm.ui.theme.auth.RegisterScreen
 import com.example.asist_derm.ui.theme.auth.WelcomeScreen
 
@@ -42,6 +43,7 @@ fun NavGraph(){
         }
         composable("clinics") { ClinicsScreen(navController) }
         composable("history") { HistoryScreen(navController) }
+        composable("profile") { ProfileScreen(navController) }
 
     }
 }

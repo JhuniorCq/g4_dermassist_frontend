@@ -196,8 +196,8 @@ fun BottomNavPanel(navController: NavHostController,modifier: Modifier= Modifier
                 }
             )
             BottomNavigationItem(
-                selected = false,
-                onClick = {  },
+                selected = currentRoute == "profile",
+                onClick = {navController.navigate("profile")  },
                 icon = {
                     Icon(painter = painterResource(R.drawable.boton5), contentDescription = "Perfil",
                         tint = Color.Unspecified)

@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -82,40 +87,84 @@ fun PredictScreen(navController: NavHostController, uri: Uri?, onBack: () -> Uni
                     Text(text = "No se pudo cargar la imagen.")
                 }
             Text_predict("Dermatitis", "Es una inflamación de la piel que causa picazón, enrojecimiento y resequedad. No es contagiosa.\n" +
-                    "Consulta con un dermatólogo para un diagnóstico preciso", navController = navController )
+                    "Consulta con un dermatólogo para un diagnóstico preciso" )
 
     }
     }
 }
 @Composable
-fun Text_predict(enfermedad: String, detalle:String , navController: NavHostController){
+fun Text_predict(enfermedad: String, detalle:String ){
 
-    Box(modifier = Modifier
-        .padding(16.dp)
-        .clip(RoundedCornerShape(16.dp))
-        .background(Color.White)
-        .border(2.dp, Color.Transparent, RoundedCornerShape(16.dp))
-        .padding(16.dp)) {
-        Column (horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "Podrias tener signos de $enfermedad", textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold, fontSize = 28.sp, color = Color.Black,
-                modifier = Modifier.padding(16.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color(0xFFE6F0F8), Color.White)
+                ),
+                shape = RoundedCornerShape(16.dp)
             )
-            Text(
-                text = "$detalle", textAlign = TextAlign.Start, color = Color.Black,
-                 fontSize = 15.sp
-            )
-            Button(onClick = { navController.navigate("clinics") },modifier = Modifier.padding(bottom = 30.dp,top = 30.dp).fillMaxWidth()
-                ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
-                ,colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4393C5)))
-            {
-                Text(text = "Ver clínicas", color = Color.White)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(
+            text = "Según nuestra IA, esta imagen se parece en un X% a las imágenes de la clase 'Y' por lo que Podrías tener signos de: ",
+            style = MaterialTheme.typography.bodyMedium, fontSize = 15.sp,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(4.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFF2F5D7C))
+                        .padding(vertical = 12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "$enfermedad",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFE0E0E0))
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "$detalle",
+                        fontStyle = FontStyle.Italic,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
-
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Esto no reemplaza un diagnóstico médico.",
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontStyle = FontStyle.Italic,
+                fontWeight = FontWeight.Bold
+            ),
+            textAlign = TextAlign.Center
+        )
     }
 }
+
 
 
 
