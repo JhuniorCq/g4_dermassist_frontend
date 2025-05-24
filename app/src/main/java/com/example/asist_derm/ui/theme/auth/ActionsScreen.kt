@@ -1,6 +1,10 @@
 package com.example.asist_derm.ui.theme.auth
 
 
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -27,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -44,6 +49,16 @@ import com.example.asist_derm.R
 
 @Composable
 fun ActionsScreen(navController: NavHostController) {
+    val context = LocalContext.current
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            Log.d("ActionsScreen", "Imagen seleccionada: $it")
+            val encodedUri = Uri.encode(it.toString())
+            navController.navigate("predict/$encodedUri")
+        }
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -61,8 +76,9 @@ fun ActionsScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Greeting(name = "Airton", apellidos = "Collachagua")
-            Presentation(navController)
-
+            Presentation(navController = navController, onUploadClick = {
+                galleryLauncher.launch("image/*")
+            })
         }
     }
 }
@@ -91,7 +107,7 @@ fun Greeting(name: String, apellidos:String) {
      }
 }
 @Composable
-fun Presentation(navController: NavHostController ) {
+fun Presentation(navController: NavHostController, onUploadClick: () -> Unit ) {
     Box(
         modifier = Modifier
             .padding(16.dp)
@@ -133,7 +149,7 @@ fun Presentation(navController: NavHostController ) {
             Text(
                 text = "o", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.Black
             )
-            Button(onClick = { }
+            Button(onClick = onUploadClick
                 ,modifier = Modifier.padding(bottom = 30.dp,top = 30.dp).fillMaxWidth()
                 ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ,colors = ButtonDefaults.buttonColors(containerColor = Color.White))
