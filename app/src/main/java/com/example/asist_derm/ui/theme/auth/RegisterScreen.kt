@@ -1,5 +1,6 @@
 package com.example.asist_derm.ui.theme.auth
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,8 +31,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
+import com.example.asist_derm.data.model.RegisterRequest
+import com.example.asist_derm.data.remote.RetrofitInstance.api
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+
+
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -116,6 +127,7 @@ fun RegisterScreen(navController: NavHostController) {
             TextField(
                 value = password,
                 onValueChange = { password = it },
+                visualTransformation = PasswordVisualTransformation(),
                 placeholder = {
                     Text(
                         text = "Password",
@@ -136,7 +148,7 @@ fun RegisterScreen(navController: NavHostController) {
                     .border(1.dp, Color.Gray.copy(alpha = 0.3f))
             )
             val context = LocalContext.current
-
+            val scope = rememberCoroutineScope()
             Button(onClick = {
                 when {
                     email.isBlank() || !email.contains("@") -> {
@@ -160,10 +172,39 @@ fun RegisterScreen(navController: NavHostController) {
                         Firebase.auth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-                                    Toast.makeText(context, "Registro exitoso", Toast.LENGTH_LONG)
-                                        .show()
-                                    navController.navigate("login") {
-                                        popUpTo("register") { inclusive = true }
+                                    val user = Firebase.auth.currentUser!!
+                                    val uid = user.uid
+                                    val emailUser = user.email ?: ""
+                                    val username = name
+
+                                    scope.launch {
+                                        try{
+                                            val req = RegisterRequest(username, emailUser, uid)
+                                            val resp = api.registerUser(req)
+                                            if (resp.isSuccessful) {
+                                                print("Respuesta del backend")
+                                                withContext(Dispatchers.Main) {
+                                                    Toast.makeText(context, "Registrado en backend", Toast.LENGTH_SHORT).show()
+                                                    navController.navigate("login") {
+                                                        popUpTo("login") { inclusive = true }
+                                                    }
+                                                }
+                                            } else {
+
+                                                withContext(Dispatchers.Main) {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Error backend: ${resp.code()}",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                }
+                                            }
+                                        }catch (e: Exception) {
+                                            Log.e("RegisterScreen", "Error alconectar al backend", e)
+                                            withContext(Dispatchers.Main) {
+                                                Toast.makeText(context, "Falló conexión: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                                            }
+                                        }
                                     }
                                 } else {
                                     Toast.makeText(context, "Registro fallido", Toast.LENGTH_LONG)
