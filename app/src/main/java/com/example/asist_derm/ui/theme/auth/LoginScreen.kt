@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,8 +39,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
+import com.example.asist_derm.data.remote.RetrofitInstance
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.launch
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -123,14 +126,35 @@ fun LoginScreen(navController: NavHostController) {
                     .border(1.dp, Color.Gray.copy(alpha = 0.3f))
             )
             val context = LocalContext.current
+            val scope = rememberCoroutineScope()
             Button(onClick = {
                 Firebase.auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener{
                         task ->
                         if (task.isSuccessful){
-                           Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_LONG).show()
-                            navController.navigate("actions") {
-                                popUpTo("login") { inclusive = true }
+                            val uid = Firebase.auth.currentUser?.uid
+                            if (uid != null) {
+                                scope.launch {
+                                    try {
+                                        val response = RetrofitInstance.api.getUserByUID(uid)
+                                        if (response.isSuccessful && response.body() != null) {
+                                            val userResponse = response.body()
+                                            val username = userResponse?.data?.username
+                                            Toast.makeText(context, "Bienvenido $username", Toast.LENGTH_LONG).show()
+
+
+                                            navController.navigate("actions") {
+                                                popUpTo("login") { inclusive = true }
+                                            }
+                                        } else {
+                                            Toast.makeText(context, "Error al obtener datos del usuario", Toast.LENGTH_LONG).show()
+                                        }
+                                    } catch (e: Exception) {
+                                        Toast.makeText(context, "Error de red: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            } else {
+                                Toast.makeText(context, "UID no encontrado", Toast.LENGTH_LONG).show()
                             }
                         } else {
                             Toast.makeText(context, task.exception?.localizedMessage ?: "Inicio de sesión fallido", Toast.LENGTH_LONG).show()
