@@ -25,7 +25,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +49,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
+import com.example.asist_derm.data.model.UserData
+import com.example.asist_derm.utils.UserSessionManager
 
 @Composable
 fun ActionsScreen(navController: NavHostController) {
@@ -58,6 +63,11 @@ fun ActionsScreen(navController: NavHostController) {
             val encodedUri = Uri.encode(it.toString())
             navController.navigate("predict/$encodedUri")
         }
+    }
+    val userData = remember { mutableStateOf<UserData?>(null) }
+
+    LaunchedEffect(Unit) {
+        userData.value = UserSessionManager.getUser(context)
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -75,7 +85,7 @@ fun ActionsScreen(navController: NavHostController) {
             modifier = Modifier.fillMaxSize().padding(paddingValues).background(brush = gradientBrush).verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Greeting(name = "Airton", apellidos = "Collachagua")
+            Greeting(username = userData.value?.username ?: "Usuario")
             Presentation(navController = navController, onUploadClick = {
                 galleryLauncher.launch("image/*")
             })
@@ -84,7 +94,7 @@ fun ActionsScreen(navController: NavHostController) {
 }
 
 @Composable
-fun Greeting(name: String, apellidos:String) {
+fun Greeting(username: String) {
      Box(modifier = Modifier.fillMaxWidth()
          .padding(top = 20.dp, start = 18.dp, end = 18.dp)
          .clip(RoundedCornerShape(16.dp))
@@ -95,7 +105,7 @@ fun Greeting(name: String, apellidos:String) {
          Text(text = buildAnnotatedString {
              append("Hola, ")
              withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = Color.Black)) {
-                 append("$name $apellidos")
+                 append(username)
              }
              append(" \uD83D\uDC4B")
          },

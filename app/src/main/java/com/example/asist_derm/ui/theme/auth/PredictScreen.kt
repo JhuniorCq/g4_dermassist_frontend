@@ -27,6 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -40,9 +43,18 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
+import com.example.asist_derm.data.model.UserData
+import com.example.asist_derm.utils.UserSessionManager
 
 @Composable
 fun PredictScreen(navController: NavHostController, uri: Uri?, onBack: () -> Unit) {
+    val context = LocalContext.current
+    val userData = remember { mutableStateOf<UserData?>(null) }
+
+    LaunchedEffect(Unit) {
+        userData.value = UserSessionManager.getUser(context)
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -61,7 +73,7 @@ fun PredictScreen(navController: NavHostController, uri: Uri?, onBack: () -> Uni
     )
             , horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Greeting(name = "Airton", apellidos = "Collachagua")
+            Greeting(username = userData.value?.username ?: "Usuario")
 
             Box(modifier = Modifier
                 .padding(16.dp)

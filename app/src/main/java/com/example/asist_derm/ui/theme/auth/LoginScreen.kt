@@ -40,6 +40,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
 import com.example.asist_derm.data.remote.RetrofitInstance
+import com.example.asist_derm.utils.UserSessionManager
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
@@ -128,39 +129,73 @@ fun LoginScreen(navController: NavHostController) {
             val context = LocalContext.current
             val scope = rememberCoroutineScope()
             Button(onClick = {
-                Firebase.auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener{
-                        task ->
-                        if (task.isSuccessful){
-                            val uid = Firebase.auth.currentUser?.uid
-                            if (uid != null) {
-                                scope.launch {
-                                    try {
-                                        val response = RetrofitInstance.api.getUserByUID(uid)
-                                        if (response.isSuccessful && response.body() != null) {
-                                            val userResponse = response.body()
-                                            val username = userResponse?.data?.username
-                                            Toast.makeText(context, "Bienvenido $username", Toast.LENGTH_LONG).show()
-
-
-                                            navController.navigate("actions") {
-                                                popUpTo("login") { inclusive = true }
-                                            }
-                                        } else {
-                                            Toast.makeText(context, "Error al obtener datos del usuario", Toast.LENGTH_LONG).show()
-                                        }
-                                    } catch (e: Exception) {
-                                        Toast.makeText(context, "Error de red: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
-                                    }
-                                }
-                            } else {
-                                Toast.makeText(context, "UID no encontrado", Toast.LENGTH_LONG).show()
-                            }
-                        } else {
-                            Toast.makeText(context, task.exception?.localizedMessage ?: "Inicio de sesión fallido", Toast.LENGTH_LONG).show()
-                        }
+                when {
+                    email.isBlank() || !email.contains("@") -> {
+                        Toast.makeText(context, "Ingresa un email válido", Toast.LENGTH_LONG).show()
                     }
+
+                    password.length < 6 -> {
+                        Toast.makeText(
+                            context,
+                            "La contraseña debe tener al menos 6 caracteres",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                 else -> {
+                     Firebase.auth.signInWithEmailAndPassword(email, password)
+                         .addOnCompleteListener { task ->
+                             if (task.isSuccessful) {
+                                 val uid = Firebase.auth.currentUser?.uid
+                                 if (uid != null) {
+                                     scope.launch {
+                                         try {
+                                             val response = RetrofitInstance.api.getUserByUID(uid)
+                                             if (response.isSuccessful && response.body() != null) {
+                                                 val userResponse = response.body()
+                                                 val username = userResponse?.data?.username
+                                                 userResponse?.data?.let { userData ->
+                                                     UserSessionManager.saveUser(context, userData)
+                                                 }
+                                                 Toast.makeText(
+                                                     context,
+                                                     "Bienvenido $username",
+                                                     Toast.LENGTH_LONG
+                                                 ).show()
+
+
+                                                 navController.navigate("actions") {
+                                                     popUpTo("login") { inclusive = true }
+                                                 }
+                                             } else {
+                                                 Toast.makeText(
+                                                     context,
+                                                     "Error al obtener datos del usuario",
+                                                     Toast.LENGTH_LONG
+                                                 ).show()
+                                             }
+                                         } catch (e: Exception) {
+                                             Toast.makeText(
+                                                 context,
+                                                 "Error de red: ${e.localizedMessage}",
+                                                 Toast.LENGTH_LONG
+                                             ).show()
+                                         }
+                                     }
+                                 } else {
+                                     Toast.makeText(context, "UID no encontrado", Toast.LENGTH_LONG)
+                                         .show()
+                                 }
+                             } else {
+                                 Toast.makeText(
+                                     context,
+                                     task.exception?.localizedMessage ?: "Inicio de sesión fallido",
+                                     Toast.LENGTH_LONG
+                                 ).show()
                              }
+                         }
+                    }
+                }
+            }
                 ,modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp)
                 ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ,colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4393C5),
