@@ -5,8 +5,10 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,23 +39,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.asist_derm.data.model.UserData
 import com.example.asist_derm.utils.UserSessionManager
+import com.example.asist_derm.utils.uriToFile
+import com.example.asist_derm.viewmodel.PredictViewModel
 
 @Composable
 fun PredictScreen(navController: NavHostController, uri: Uri?, onBack: () -> Unit) {
     val context = LocalContext.current
     val userData = remember { mutableStateOf<UserData?>(null) }
+    val viewModel = remember { PredictViewModel() }
 
     LaunchedEffect(Unit) {
         userData.value = UserSessionManager.getUser(context)
     }
+    val prediction = viewModel.prediction
+    val isLoading = viewModel.isLoading
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -98,14 +102,46 @@ fun PredictScreen(navController: NavHostController, uri: Uri?, onBack: () -> Uni
                 } else
                     Text(text = "No se pudo cargar la imagen.")
                 }
-            Text_predict("Dermatitis", "Es una inflamación de la piel que causa picazón, enrojecimiento y resequedad. No es contagiosa.\n" +
-                    "Consulta con un dermatólogo para un diagnóstico preciso" )
+            Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Button(
+                    onClick = {navController.navigate ("camera")},
+                    modifier = Modifier.padding(10.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                )
+                        {
+                            Text("Reintentar", color = Color.Black)
+                        }
+                Spacer(modifier = Modifier.height(8.dp))
+                    Button(onClick = { uri?.let {
+                        val file = uriToFile(context, it)
+                        val uid = userData.value?.uid ?: ""
+                        viewModel.analyzeImage(uid, file)
+                        }
+                    },
+                        modifier = Modifier.padding(10.dp),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4393C5)))
+                    {
+                        Text(if (isLoading) "Analizando..." else "Analizar imagen", color = Color.White)
+                    }
+            }
+             prediction?.let { pred ->
+              if (!pred.prediction.isNullOrBlank()) {
+                  Text_predict(
+                      enfermedad = pred.prediction,
+                      detalle = "Es una inflamación de la piel que causa picazón, enrojecimiento y resequedad. No es contagiosa.\n" +
+                              "Consulta con un dermatólogo para un diagnóstico preciso",
+                      porcentaje = pred.probability * 100
+                  )
+              }
+            }
 
     }
     }
 }
 @Composable
-fun Text_predict(enfermedad: String, detalle:String ){
+fun Text_predict(enfermedad: String, detalle:String, porcentaje: Double ){
 
     Column(
         modifier = Modifier
@@ -122,7 +158,7 @@ fun Text_predict(enfermedad: String, detalle:String ){
     ) {
 
         Text(
-            text = "Según nuestra IA, esta imagen se parece en un X% a las imágenes de la clase 'Y' por lo que Podrías tener signos de: ",
+            text = "\"Según nuestra IA, esta imagen se parece en un ${"%.2f".format(porcentaje)}% a esta enfermedad por lo que podrías tener signos de:",
             style = MaterialTheme.typography.bodyMedium, fontSize = 15.sp,
             textAlign = TextAlign.Center
         )
