@@ -1,5 +1,6 @@
 package com.example.asist_derm.ui.theme.auth
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -23,29 +24,32 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.asist_derm.data.model.UserData
+import com.example.asist_derm.utils.TextToSpeechHelper
 import com.example.asist_derm.utils.UserSessionManager
 import com.example.asist_derm.utils.uriToFile
 import com.example.asist_derm.viewmodel.PredictViewModel
+
 
 @Composable
 fun PredictScreen(navController: NavHostController, uri: Uri?, onBack: () -> Unit) {
@@ -53,12 +57,22 @@ fun PredictScreen(navController: NavHostController, uri: Uri?, onBack: () -> Uni
     val userData = remember { mutableStateOf<UserData?>(null) }
     val viewModel = remember { PredictViewModel() }
 
+
     LaunchedEffect(Unit) {
         userData.value = UserSessionManager.getUser(context)
     }
+
     val prediction = viewModel.prediction
+    val detalle = viewModel.diseaseDetail
     val isLoading = viewModel.isLoading
 
+    LaunchedEffect(prediction) {
+        prediction?.prediction?.let { enfermedad ->
+            if (detalle.isNullOrEmpty()) {
+                viewModel.getDiseaseInfo(enfermedad)
+            }
+        }
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -117,21 +131,23 @@ fun PredictScreen(navController: NavHostController, uri: Uri?, onBack: () -> Uni
                         val file = uriToFile(context, it)
                         val uid = userData.value?.uid ?: ""
                         viewModel.analyzeImage(uid, file)
+
                         }
                     },
                         modifier = Modifier.padding(10.dp),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4393C5)))
-                    {
+                                        {
                         Text(if (isLoading) "Analizando..." else "Analizar imagen", color = Color.White)
                     }
             }
              prediction?.let { pred ->
-              if (!pred.prediction.isNullOrBlank()) {
+              if (pred.prediction.isNotBlank()) {
+                  val detalle = viewModel.diseaseDetail ?: "Obteniendo detalle..."
                   Text_predict(
+                      context = context,
                       enfermedad = pred.prediction,
-                      detalle = "Es una inflamación de la piel que causa picazón, enrojecimiento y resequedad. No es contagiosa.\n" +
-                              "Consulta con un dermatólogo para un diagnóstico preciso",
+                      detalle = detalle,
                       porcentaje = pred.probability * 100
                   )
               }
@@ -141,8 +157,14 @@ fun PredictScreen(navController: NavHostController, uri: Uri?, onBack: () -> Uni
     }
 }
 @Composable
-fun Text_predict(enfermedad: String, detalle:String, porcentaje: Double ){
-
+fun Text_predict(context: Context, enfermedad: String, detalle:String, porcentaje: Double ){
+    val ttsHelper = remember { TextToSpeechHelper(context) }
+    DisposableEffect(Unit) {
+        onDispose {
+            ttsHelper.stop()
+            ttsHelper.shutdown()
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -179,11 +201,28 @@ fun Text_predict(enfermedad: String, detalle:String, porcentaje: Double ){
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "$enfermedad",
+                        text = enfermedad,
                         color = Color.White,
+                        textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(10.dp)
                     )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFE0E0E0))
+                        .padding(8.dp)
+                ) {
+                    Button(onClick = {
+                        ttsHelper.speak(detalle)
+                    },
+                        modifier = Modifier.padding(top = 16.dp).align(Alignment.Center),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2F5D7C))
+                    ) {
+                        Text("🔊 Escuchar explicación", color = Color.White)
+                    }
                 }
                 Box(
                     modifier = Modifier
@@ -192,7 +231,7 @@ fun Text_predict(enfermedad: String, detalle:String, porcentaje: Double ){
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "$detalle",
+                        text = detalle,
                         fontStyle = FontStyle.Italic,
                         style = MaterialTheme.typography.bodyMedium
                     )

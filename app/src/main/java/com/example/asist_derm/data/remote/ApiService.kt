@@ -1,6 +1,7 @@
 package com.example.asist_derm.data.remote
 
-import com.example.asist_derm.data.model.Prediction
+import com.example.asist_derm.data.model.DiseaseRequest
+import com.example.asist_derm.data.model.DiseaseResponse
 import com.example.asist_derm.data.model.PredictionResponse
 import com.example.asist_derm.data.model.RegisterRequest
 import com.example.asist_derm.data.model.RegisterResponse
@@ -29,4 +30,8 @@ interface ApiService {
 
     @GET("user/{uid}")
     suspend fun getUserByUID(@Path("uid") uid: String): Response<UserResponse>
+
+    @POST("disease/info")
+    suspend fun getInfo(@Body request: DiseaseRequest): DiseaseResponse
+
 }

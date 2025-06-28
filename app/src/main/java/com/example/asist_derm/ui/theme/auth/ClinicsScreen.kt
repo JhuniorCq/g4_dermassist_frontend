@@ -70,7 +70,7 @@ fun ClinicsScreen(navController: NavHostController) {
 @Composable
 fun TitleClinic(){
     Column (modifier = Modifier.fillMaxWidth().padding(10.dp), horizontalAlignment= Alignment.CenterHorizontally) {
-    Text(text = "Encuenta a los Mejores", textAlign = TextAlign.Center
+    Text(text = "Encuentra a los Mejores", textAlign = TextAlign.Center
         , color = Color.White, fontSize = 30.sp, fontStyle = FontStyle.Italic, fontWeight = FontWeight.Bold
         , modifier = Modifier.padding(top = 20.dp, bottom = 10.dp))
     Text(text = "Las mejores clínicas dermatológicas en Perú trabajan con nosotros"
