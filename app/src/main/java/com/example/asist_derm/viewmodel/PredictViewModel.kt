@@ -1,18 +1,17 @@
 package com.example.asist_derm.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.asist_derm.data.model.DiseaseRequest
 import com.example.asist_derm.data.model.Prediction
+import com.example.asist_derm.data.remote.RetrofitInstance
 import com.example.asist_derm.data.repository.PredictionRepository
 import kotlinx.coroutines.launch
 import java.io.File
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import com.example.asist_derm.data.model.DiseaseRequest
-import com.example.asist_derm.data.remote.ApiService
-import com.example.asist_derm.data.remote.RetrofitInstance
 
 class PredictViewModel : ViewModel() {
     private val repository = PredictionRepository()

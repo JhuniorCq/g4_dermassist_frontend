@@ -2,7 +2,7 @@ package com.example.asist_derm.utils
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
-import java.util.*
+import java.util.Locale
 
 class TextToSpeechHelper(context: Context) {
 

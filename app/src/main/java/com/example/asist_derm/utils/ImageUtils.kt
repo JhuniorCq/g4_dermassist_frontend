@@ -8,8 +8,6 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 fun captureAndSaveImage(
     context: Context,
