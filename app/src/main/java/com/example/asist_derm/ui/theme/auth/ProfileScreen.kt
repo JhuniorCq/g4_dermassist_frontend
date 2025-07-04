@@ -20,11 +20,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -94,13 +92,8 @@ fun Control(navController: NavHostController) {
     LaunchedEffect(Unit) {
         userData.value = UserSessionManager.getUser(context)
     }
-    var uid by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(Unit) {
-        val user = UserSessionManager.getUser(context)
-        uid = user?.uid
-    }
-    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp), verticalArrangement = Arrangement.Center) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Center) {
       Text(
           text =  userData?.value?.username ?: "Cargando...",
           color = Color.Black, fontSize = 28.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth().padding(top = 20.dp), textAlign = TextAlign.Center
@@ -114,7 +107,7 @@ fun Control(navController: NavHostController) {
             Text(text = "Nuevo diágnostico")
         }
         Spacer(modifier = Modifier.height(24.dp))
-        Button(onClick ={ uid?.let { navController.navigate("history/$it") }}
+        Button(onClick = {navController.navigate("history")}
             ,modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp)
             ,elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
             ,colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4393C5),

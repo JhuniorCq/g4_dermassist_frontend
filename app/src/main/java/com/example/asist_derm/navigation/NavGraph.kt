@@ -42,10 +42,7 @@ fun NavGraph(){
                 , uri = uri, onBack = { navController.popBackStack() })
         }
         composable("clinics") { ClinicsScreen(navController) }
-        composable("history/{uid}") { backStackEntry ->
-            val uid = backStackEntry.arguments?.getString("uid") ?: ""
-            HistoryScreen(navController, uid)
-        }
+        composable("history") { HistoryScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
 
     }

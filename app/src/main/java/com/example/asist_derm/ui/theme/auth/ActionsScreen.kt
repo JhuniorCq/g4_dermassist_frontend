@@ -29,7 +29,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -176,15 +175,7 @@ fun Presentation(navController: NavHostController, onUploadClick: () -> Unit ) {
 fun BottomNavPanel(navController: NavHostController,modifier: Modifier= Modifier) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
-        val context = LocalContext.current
-        var uid by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(Unit) {
-        val user = UserSessionManager.getUser(context)
-        uid = user?.uid
-    }
-
-    BottomNavigation(
+      BottomNavigation(
             modifier = Modifier.fillMaxWidth(), backgroundColor = Color.White,
         ) {
             BottomNavigationItem(
@@ -198,7 +189,7 @@ fun BottomNavPanel(navController: NavHostController,modifier: Modifier= Modifier
             )
             BottomNavigationItem(
                 selected = currentRoute == "history",
-                onClick =  { uid?.let { navController.navigate("history/$it") }},
+                onClick = { navController.navigate("history") },
                 icon = {
                     Icon(painter = painterResource(R.drawable.boton2), contentDescription = "Historial"
                         ,tint = Color.Unspecified)

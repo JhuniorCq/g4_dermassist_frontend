@@ -1,13 +1,6 @@
 package com.example.asist_derm.data.remote
 
-<<<<<<< Updated upstream
 import com.example.asist_derm.data.model.Prediction
-=======
-import com.example.asist_derm.data.model.DiseaseRequest
-import com.example.asist_derm.data.model.DiseaseResponse
-import com.example.asist_derm.data.model.HistoryResponse
-import com.example.asist_derm.data.model.PredictionHistoryItem
->>>>>>> Stashed changes
 import com.example.asist_derm.data.model.PredictionResponse
 import com.example.asist_derm.data.model.RegisterRequest
 import com.example.asist_derm.data.model.RegisterResponse
@@ -36,15 +29,4 @@ interface ApiService {
 
     @GET("user/{uid}")
     suspend fun getUserByUID(@Path("uid") uid: String): Response<UserResponse>
-<<<<<<< Updated upstream
-=======
-
-    @POST("disease/info")
-    suspend fun getInfo(@Body request: DiseaseRequest): DiseaseResponse
-
-    @GET("prediction/{uid}")
-    suspend fun getPredictionHistory(@Path("uid") uid: String): Response<HistoryResponse>
-
-
->>>>>>> Stashed changes
 }
