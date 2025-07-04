@@ -51,6 +51,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.asist_derm.R
 import com.example.asist_derm.data.model.UserData
 import com.example.asist_derm.utils.UserSessionManager
+import androidx.compose.runtime.*
+
+
 
 @Composable
 fun ActionsScreen(navController: NavHostController) {
@@ -175,7 +178,14 @@ fun Presentation(navController: NavHostController, onUploadClick: () -> Unit ) {
 fun BottomNavPanel(navController: NavHostController,modifier: Modifier= Modifier) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
-      BottomNavigation(
+            val context = LocalContext.current
+        var uid by remember { mutableStateOf<String?>(null) }
+        LaunchedEffect(Unit) {
+            val user = UserSessionManager.getUser(context)
+            uid = user?.uid
+        }
+
+    BottomNavigation(
             modifier = Modifier.fillMaxWidth(), backgroundColor = Color.White,
         ) {
             BottomNavigationItem(
@@ -189,7 +199,7 @@ fun BottomNavPanel(navController: NavHostController,modifier: Modifier= Modifier
             )
             BottomNavigationItem(
                 selected = currentRoute == "history",
-                onClick = { navController.navigate("history") },
+                onClick = { uid?.let { navController.navigate("history/$it") }},
                 icon = {
                     Icon(painter = painterResource(R.drawable.boton2), contentDescription = "Historial"
                         ,tint = Color.Unspecified)
