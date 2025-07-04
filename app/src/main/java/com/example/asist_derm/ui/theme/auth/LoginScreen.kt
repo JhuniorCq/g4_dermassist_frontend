@@ -156,12 +156,6 @@ fun LoginScreen(navController: NavHostController) {
                                                  userResponse?.data?.let { userData ->
                                                      UserSessionManager.saveUser(context, userData)
                                                  }
-                                                 Toast.makeText(
-                                                     context,
-                                                     "Bienvenido $username",
-                                                     Toast.LENGTH_LONG
-                                                 ).show()
-
 
                                                  navController.navigate("actions") {
                                                      popUpTo("login") { inclusive = true }
